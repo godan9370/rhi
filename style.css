@@ -105,4 +105,13 @@ button:hover,
 .cell:hover {
   cursor: url('custom-cursor-hover.png'), pointer;
 }
+#dvd-logo {
+  position: fixed;
+  width: 100px;
+  height: auto;
+  top: 50px;
+  left: 50px;
+  z-index: 9998;
+  pointer-events: none;
+}
 
