@@ -117,3 +117,16 @@ function getAdjacentIndexes(index) {
 }
 
 initGame();
+
+const music = document.getElementById('bgMusic');
+const playPauseBtn = document.getElementById('playPauseBtn');
+
+playPauseBtn.addEventListener('click', () => {
+  if (music.paused) {
+    music.play();
+    playPauseBtn.textContent = '⏸️ Pause Music';
+  } else {
+    music.pause();
+    playPauseBtn.textContent = '▶️ Play Music';
+  }
+});
