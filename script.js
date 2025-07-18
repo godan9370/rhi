@@ -1,188 +1,114 @@
-const gridSize = 10;
-const mineCount = 15;
-let grid = [];
-let minePositions = [];
+// ===== Minesweeper Clone with music & restart button =====
 
-const game = document.getElementById('game');
-const statusText = document.getElementById('status');
+const rows = 10;
+const cols = 10;
+const totalMines = 15;
 
-function initGame() {
-  game.innerHTML = '';
-  grid = [];
-  minePositions = [];
-
-  // Set up grid
-  for (let i = 0; i < gridSize * gridSize; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    cell.dataset.index = i;
-    cell.addEventListener('click', handleClick);
-    cell.addEventListener('contextmenu', handleRightClick);
-    game.appendChild(cell);
-    grid.push(cell);
-  }
-
-  // Place mines
-  while (minePositions.length < mineCount) {
-    const index = Math.floor(Math.random() * grid.length);
-    if (!minePositions.includes(index)) {
-      minePositions.push(index);
-    }
-    
-  }
-}
-
-function handleClick(e) {
-  const index = parseInt(e.target.dataset.index);
-  if (e.target.classList.contains('flagged')) return;
-
-  if (minePositions.includes(index)) {
-    revealMines();
-    statusText.textContent = '💥 Game Over!';
-    disableBoard();
-    return;
-  }
-
-  revealCell(index);
-  checkWin();
-}
-
-function handleRightClick(e) {
-  e.preventDefault();
-  const cell = e.target;
-  if (cell.classList.contains('revealed')) return;
-  cell.classList.toggle('flagged');
-  checkWin();
-}
-
-function revealCell(index) {
-  const cell = grid[index];
-  if (!cell || cell.classList.contains('revealed')) return;
-
-  cell.classList.add('revealed');
-  const adjacent = getAdjacentIndexes(index);
-  const mineCount = adjacent.filter(i => minePositions.includes(i)).length;
-  if (mineCount > 0) {
-    cell.textContent = mineCount;
-  } else {
-    // Reveal surrounding
-    adjacent.forEach(revealCell);
-  }
-}
-
-function revealMines() {
-  minePositions.forEach(index => {
-    const cell = grid[index];
-    cell.classList.add('revealed');
-    const img = document.createElement('img');
-img.src = 'mybomb.jpg';
-img.style.width = '100%';
-img.style.height = '100%';
-cell.appendChild(img);
-
-  });
-}
-
-function disableBoard() {
-  grid.forEach(cell => {
-    cell.removeEventListener('click', handleClick);
-    cell.removeEventListener('contextmenu', handleRightClick);
-  });
-}
-
-function checkWin() {
-  const revealed = grid.filter(cell => cell.classList.contains('revealed')).length;
-  if (revealed === grid.length - mineCount) {
-    statusText.textContent = '🎉 You Win!';
-    disableBoard();
-  }
-}
-
-function getAdjacentIndexes(index) {
-  const x = index % gridSize;
-  const y = Math.floor(index / gridSize);
-  const neighbors = [];
-
-  for (let dy = -1; dy <= 1; dy++) {
-    for (let dx = -1; dx <= 1; dx++) {
-      if (dx === 0 && dy === 0) continue;
-      const nx = x + dx;
-      const ny = y + dy;
-      if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize) {
-        neighbors.push(ny * gridSize + nx);
-      }
-    }
-  }
-
-  return neighbors;
-}
-
-initGame();
-
-const music = document.getElementById('bgMusic');
-const playPauseBtn = document.getElementById('playPauseBtn');
-
-playPauseBtn.addEventListener('click', () => {
-  if (music.paused) {
-    music.play();
-    playPauseBtn.textContent = '⏸️ Pause Music';
-  } else {
-    music.pause();
-    playPauseBtn.textContent = '▶️ Play Music';
-  }
-});
-
-// Game variables (make sure these are declared at the top of your script.js if used elsewhere)
-let minePositions = [];
-let flags = 0;
+let minePositions = new Set();
 let revealedCount = 0;
+let gameOver = false;
 
+const gameContainer = document.getElementById('game');
+const statusText = document.getElementById('status');
+const bgMusic = document.getElementById('bgMusic');
+const loseSound = document.getElementById('loseSound');
+
+// Create a 2D array to store cell elements and their info
+let cells = [];
+
+// Initialize the game grid and variables
 function initGame() {
-  const gameContainer = document.getElementById('game');
-  gameContainer.innerHTML = '';  // Clear old cells
-  
-  // Reset variables
-  minePositions = [];
-  flags = 0;
+  gameOver = false;
   revealedCount = 0;
+  minePositions.clear ? minePositions.clear() : minePositions = new Set();
 
-  // Example: Create 100 cells in a 10x10 grid
-  for (let i = 0; i < 100; i++) {
-    const cell = document.createElement('div');
-    cell.classList.add('cell');
-    
-    // Add your actual cell click logic here:
-    cell.addEventListener('click', () => {
-      // Example click handler - customize for your game
-      console.log(`Cell ${i} clicked`);
-    });
-    
-    gameContainer.appendChild(cell);
+  // Clear UI
+  gameContainer.innerHTML = '';
+  statusText.textContent = '';
+
+  cells = [];
+
+  // Create grid cells
+  for (let r = 0; r < rows; r++) {
+    cells[r] = [];
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.row = r;
+      cell.dataset.col = c;
+      cell.style.userSelect = 'none';
+      cell.style.position = 'relative';
+
+      cell.addEventListener('click', onCellClick);
+      gameContainer.appendChild(cell);
+
+      cells[r][c] = {
+        element: cell,
+        isMine: false,
+        adjacentMines: 0,
+        revealed: false,
+      };
+    }
   }
-  
-  // TODO: Add mine placement and other initialization here
-  console.log('Game initialized');
+
+  placeMines();
+  calculateAdjacents();
 }
 
-// Restart button listener
-window.onload = () => {
-  document.getElementById('restartBtn').addEventListener('click', () => {
-    // Stop and reset lose sound if playing
-    const loseSound = document.getElementById('loseSound');
-    if (loseSound) {
-      loseSound.pause();
-      loseSound.currentTime = 0;
-    }
-
-    // Clear status text
-    const statusText = document.getElementById('status');
-    if (statusText) statusText.textContent = '';
-
-    // Restart the game
-    initGame();
+// Randomly place mines
+function placeMines() {
+  while (minePositions.size < totalMines) {
+    const pos = Math.floor(Math.random() * rows * cols);
+    if (!minePositions.has(pos)) minePositions.add(pos);
+  }
+  // Mark mine cells
+  minePositions.forEach(pos => {
+    const r = Math.floor(pos / cols);
+    const c = pos % cols;
+    cells[r][c].isMine = true;
   });
+}
 
-  // Initialize the game on page load
-  initGame();
-};
+// Calculate adjacent mines count for each cell
+function calculateAdjacents() {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (cells[r][c].isMine) continue;
 
+      let count = 0;
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const nr = r + dr;
+          const nc = c + dc;
+          if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+            if (cells[nr][nc].isMine) count++;
+          }
+        }
+      }
+      cells[r][c].adjacentMines = count;
+    }
+  }
+}
+
+// Handle cell click event
+function onCellClick(e) {
+  if (gameOver) return;
+
+  const cellElem = e.currentTarget;
+  const r = Number(cellElem.dataset.row);
+  const c = Number(cellElem.dataset.col);
+  const cell = cells[r][c];
+
+  if (cell.revealed) return;
+
+  revealCell(r, c);
+
+  if (cell.isMine) {
+    gameLost();
+  } else if (revealedCount === rows * cols - totalMines) {
+    gameWon();
+  }
+}
+
+// Reveal a cell (and flood reveal if no adjacen
