@@ -304,5 +304,53 @@ document.addEventListener('DOMContentLoaded', () => {
   // Create a balloon every 800ms (adjust as you like)
   setInterval(createBalloon, 800);
 </script>
+  <style>
+  #birthdayPopup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #ff0066, #ffcc00, #ff0066);
+    background-size: 200% 200%;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 900;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 0 15px #ff0066;
+    cursor: pointer;
+    animation: flashBG 2s infinite alternate;
+    z-index: 12000;
+    user-select: none;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+
+  @keyframes flashBG {
+    0% {
+      background-position: 0% 50%;
+      text-shadow: 0 0 10px #ff0066;
+    }
+    100% {
+      background-position: 100% 50%;
+      text-shadow: 0 0 30px #ffcc00;
+    }
+  }
+</style>
+
+<div id="birthdayPopup">It's your birthday!!!!! claim your prize today</div>
+
+<script>
+  const popup = document.getElementById('birthdayPopup');
+  // Optional: click to dismiss the popup
+  popup.addEventListener('click', () => {
+    popup.style.display = 'none';
+  });
+
+  // Optional: auto hide after 15 seconds
+  setTimeout(() => {
+    popup.style.display = 'none';
+  }, 15000);
+</script>
 </body>
 </html>
