@@ -92,3 +92,13 @@ body {
   transform: translateX(-50%);
   pointer-events: none; /* so clicks go through to the page */
 }
+
+/* Apply custom cursor to the whole page */
+body {
+  cursor: url('custom-cursor.png'), auto;
+}
+
+/* Optionally: set a different cursor when hovering over clickable cells */
+.cell:hover {
+  cursor: url('custom-cursor-hover.png'), pointer;
+}
