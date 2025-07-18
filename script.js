@@ -229,3 +229,78 @@ window.onload = () => {
   initGame();
   if (bgMusic) bgMusic.play();
 };
+
+// Create and show a draggable popup YouTube video
+function createPopupVideo(videoId, title = "Video") {
+  const container = document.getElementById('popups-container');
+  
+  // Create popup div
+  const popup = document.createElement('div');
+  popup.className = 'popup-video';
+  popup.style.top = '100px';
+  popup.style.left = '100px';
+
+  // Create header for drag
+  const header = document.createElement('div');
+  header.className = 'popup-header';
+  header.textContent = title;
+  popup.appendChild(header);
+
+  // Create iframe for YouTube video
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${7Cr1NMC_n6E&}?autoplay=1&controls=1`;
+  iframe.frameBorder = '0';
+  iframe.allow = 'autoplay; encrypted-media';
+  iframe.allowFullscreen = true;
+  popup.appendChild(iframe);
+
+  container.appendChild(popup);
+
+  // Drag functionality
+  let isDragging = false, offsetX, offsetY;
+
+  header.addEventListener('mousedown', e => {
+    isDragging = true;
+    offsetX = e.clientX - popup.offsetLeft;
+    offsetY = e.clientY - popup.offsetTop;
+    popup.style.transition = 'none'; // disable transitions while dragging
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    popup.style.transition = ''; // restore transitions
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    let x = e.clientX - offsetX;
+    let y = e.clientY - offsetY;
+
+    // Optional: keep popup inside viewport
+    const maxX = window.innerWidth - popup.offsetWidth;
+    const maxY = window.innerHeight - popup.offsetHeight;
+    x = Math.min(Math.max(0, x), maxX);
+    y = Math.min(Math.max(0, y), maxY);
+
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+  });
+
+  return popup;
+}
+
+// Example usage: create popup with button
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.createElement('button');
+  btn.textContent = 'Open Popup Video';
+  btn.style.position = 'fixed';
+  btn.style.top = '10px';
+  btn.style.right = '10px';
+  btn.style.zIndex = 2000;
+  document.body.appendChild(btn);
+
+  btn.addEventListener('click', () => {
+    createPopupVideo('dQw4w9WgXcQ', 'Cool Video');
+  });
+});
+
