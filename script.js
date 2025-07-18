@@ -111,4 +111,121 @@ function onCellClick(e) {
   }
 }
 
-// Reveal a cell (and flood reveal if no adjacen
+// Reveal a cell (and flood reveal if no adjacent mines)
+function revealCell(r, c) {
+  const cell = cells[r][c];
+  if (cell.revealed) return;
+
+  cell.revealed = true;
+  revealedCount++;
+
+  const el = cell.element;
+  el.classList.add('revealed');
+  el.style.pointerEvents = 'none';
+
+  if (cell.isMine) {
+    el.innerHTML = `<img src="mybomb.png" alt="bomb" style="width:100%;height:100%;">`;
+  } else if (cell.adjacentMines > 0) {
+    el.textContent = cell.adjacentMines;
+    el.style.color = getNumberColor(cell.adjacentMines);
+    el.style.fontWeight = 'bold';
+  } else {
+    // empty cell: reveal neighbors recursively
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+          revealCell(nr, nc);
+        }
+      }
+    }
+  }
+}
+
+// Returns color based on number of adjacent mines
+function getNumberColor(num) {
+  const colors = {
+    1: 'blue',
+    2: 'green',
+    3: 'red',
+    4: 'darkblue',
+    5: 'brown',
+    6: 'cyan',
+    7: 'black',
+    8: 'gray',
+  };
+  return colors[num] || 'black';
+}
+
+// Game lost: show all mines, stop bg music, play lose sound
+function gameLost() {
+  gameOver = true;
+  statusText.textContent = '💥 You hit a mine! Game Over.';
+  
+  // Reveal all mines
+  minePositions.forEach(pos => {
+    const r = Math.floor(pos / cols);
+    const c = pos % cols;
+    const cell = cells[r][c];
+    if (!cell.revealed) {
+      cell.revealed = true;
+      const el = cell.element;
+      el.classList.add('revealed');
+      el.style.pointerEvents = 'none';
+      el.innerHTML = `<img src="mybomb.jpg" alt="bomb" style="width:100%;height:100%;">`;
+    }
+  });
+
+  // Pause bg music and play lose sound
+  if (bgMusic) bgMusic.pause();
+  if (loseSound) {
+    loseSound.currentTime = 0;
+    loseSound.play();
+  }
+}
+
+// Game won: stop the game and show message
+function gameWon() {
+  gameOver = true;
+  statusText.textContent = '🎉 Congratulations! You cleared all mines!';
+  if (bgMusic) bgMusic.pause();
+}
+
+// Background music play/pause toggle (optional)
+const playPauseBtn = document.getElementById('playPauseBtn');
+if (playPauseBtn) {
+  playPauseBtn.addEventListener('click', () => {
+    if (bgMusic.paused) {
+      bgMusic.play();
+      playPauseBtn.textContent = '⏸️ Pause Music';
+    } else {
+      bgMusic.pause();
+      playPauseBtn.textContent = '▶️ Play Music';
+    }
+  });
+}
+
+// Restart button logic
+const restartBtn = document.getElementById('restartBtn');
+if (restartBtn) {
+  restartBtn.addEventListener('click', () => {
+    if (loseSound) {
+      loseSound.pause();
+      loseSound.currentTime = 0;
+    }
+    if (bgMusic) {
+      bgMusic.currentTime = 0;
+      bgMusic.play();
+    }
+    statusText.textContent = '';
+    initGame();
+  });
+}
+
+// Start the game on page load
+window.onload = () => {
+  initGame();
+  if (bgMusic) bgMusic.play();
+};
