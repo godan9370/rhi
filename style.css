@@ -57,3 +57,18 @@ body {
 #playPauseBtn:hover {
   background-color: #666;
 }
+
+#restartBtn {
+  margin-top: 1em;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#restartBtn:hover {
+  background-color: #555;
+}
