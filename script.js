@@ -73,7 +73,12 @@ function revealMines() {
   minePositions.forEach(index => {
     const cell = grid[index];
     cell.classList.add('revealed');
-    cell.textContent = '💣';
+    const img = document.createElement('img');
+img.src = 'mybomb.jpg';
+img.style.width = '100%';
+img.style.height = '100%';
+cell.appendChild(img);
+
   });
 }
 
