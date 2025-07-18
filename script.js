@@ -28,6 +28,7 @@ function initGame() {
     if (!minePositions.includes(index)) {
       minePositions.push(index);
     }
+    
   }
 }
 
@@ -131,12 +132,57 @@ playPauseBtn.addEventListener('click', () => {
   }
 });
 
-document.getElementById('restartBtn').addEventListener('click', () => {
-  const loseSound = document.getElementById('loseSound');
-  const statusText = document.getElementById('status');
-  loseSound.pause();
-  loseSound.currentTime = 0;
-  statusText.textContent = '';
+// Game variables (make sure these are declared at the top of your script.js if used elsewhere)
+let minePositions = [];
+let flags = 0;
+let revealedCount = 0;
+
+function initGame() {
+  const gameContainer = document.getElementById('game');
+  gameContainer.innerHTML = '';  // Clear old cells
+  
+  // Reset variables
+  minePositions = [];
+  flags = 0;
+  revealedCount = 0;
+
+  // Example: Create 100 cells in a 10x10 grid
+  for (let i = 0; i < 100; i++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell');
+    
+    // Add your actual cell click logic here:
+    cell.addEventListener('click', () => {
+      // Example click handler - customize for your game
+      console.log(`Cell ${i} clicked`);
+    });
+    
+    gameContainer.appendChild(cell);
+  }
+  
+  // TODO: Add mine placement and other initialization here
+  console.log('Game initialized');
+}
+
+// Restart button listener
+window.onload = () => {
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    // Stop and reset lose sound if playing
+    const loseSound = document.getElementById('loseSound');
+    if (loseSound) {
+      loseSound.pause();
+      loseSound.currentTime = 0;
+    }
+
+    // Clear status text
+    const statusText = document.getElementById('status');
+    if (statusText) statusText.textContent = '';
+
+    // Restart the game
+    initGame();
+  });
+
+  // Initialize the game on page load
   initGame();
-});
+};
 
