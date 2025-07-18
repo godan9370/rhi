@@ -233,3 +233,28 @@ window.onload = () => {
 setInterval(() => {
   document.body.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
 }, 800);
+
+const dvd = document.getElementById('dvd-logo');
+let x = 3;
+let y = 3;
+let posX = 100;
+let posY = 100;
+
+function bounce() {
+  const screenWidth = window.innerWidth - dvd.clientWidth;
+  const screenHeight = window.innerHeight - dvd.clientHeight;
+
+  posX += x;
+  posY += y;
+
+  if (posX <= 0 || posX >= screenWidth) x = -x;
+  if (posY <= 0 || posY >= screenHeight) y = -y;
+
+  dvd.style.left = posX + 'px';
+  dvd.style.top = posY + 'px';
+
+  requestAnimationFrame(bounce);
+}
+
+bounce();
+
