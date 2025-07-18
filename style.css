@@ -93,12 +93,14 @@ body {
   pointer-events: none; /* so clicks go through to the page */
 }
 
-/* Apply custom cursor to the whole page */
-body {
+/* Normal custom cursor */
+body, #game, button {
   cursor: url('custom-cursor.png'), auto;
 }
 
-/* Optionally: set a different cursor when hovering over clickable cells */
+/* Hover cursor on buttons and game cells */
+button:hover,
 .cell:hover {
   cursor: url('custom-cursor-hover.png'), pointer;
 }
+
