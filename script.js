@@ -240,6 +240,25 @@ let y = 3;
 let posX = 100;
 let posY = 100;
 
+function createTrail(x, y) {
+  const trail = document.createElement('img');
+  trail.src = 'DVD.png';
+  trail.style.position = 'fixed';
+  trail.style.left = x + 'px';
+  trail.style.top = y + 'px';
+  trail.style.width = '100px';
+  trail.style.opacity = '0.3';
+  trail.style.pointerEvents = 'none';
+  trail.style.zIndex = 9997;
+  trail.style.transition = 'opacity 1s linear';
+  document.body.appendChild(trail);
+
+  setTimeout(() => {
+    trail.style.opacity = '0';
+    setTimeout(() => trail.remove(), 1000);
+  }, 0);
+}
+
 function bounce() {
   const screenWidth = window.innerWidth - dvd.clientWidth;
   const screenHeight = window.innerHeight - dvd.clientHeight;
@@ -247,14 +266,22 @@ function bounce() {
   posX += x;
   posY += y;
 
-  if (posX <= 0 || posX >= screenWidth) x = -x;
-  if (posY <= 0 || posY >= screenHeight) y = -y;
+  if (posX <= 0 || posX >= screenWidth) {
+    x = -x;
+    dvd.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+  }
+
+  if (posY <= 0 || posY >= screenHeight) {
+    y = -y;
+    dvd.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+  }
 
   dvd.style.left = posX + 'px';
   dvd.style.top = posY + 'px';
 
+  createTrail(posX, posY);
   requestAnimationFrame(bounce);
 }
 
 bounce();
-
+dvd.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
