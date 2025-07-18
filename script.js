@@ -130,3 +130,13 @@ playPauseBtn.addEventListener('click', () => {
     playPauseBtn.textContent = '▶️ Play Music';
   }
 });
+
+document.getElementById('restartBtn').addEventListener('click', () => {
+  const loseSound = document.getElementById('loseSound');
+  const statusText = document.getElementById('status');
+  loseSound.pause();
+  loseSound.currentTime = 0;
+  statusText.textContent = '';
+  initGame();
+});
+
