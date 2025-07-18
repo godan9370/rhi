@@ -72,3 +72,23 @@ body {
 #restartBtn:hover {
   background-color: #555;
 }
+
+#video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1; /* behind everything */
+}
+
+#video-background iframe {
+  width: 177.77vh; /* 16:9 ratio width relative to viewport height */
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none; /* so clicks go through to the page */
+}
