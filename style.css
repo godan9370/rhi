@@ -1,7 +1,9 @@
 body {
   font-family: sans-serif;
   text-align: center;
-  background-color: #f0f0f0;
+   background-color: #ff6600; /* bright orange */
+  margin: 0; /* optional: removes default margin */
+  height: 100vh; /* make sure body covers full viewport */
 }
 
 #game {
