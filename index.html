@@ -4,54 +4,92 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Rhiiiii</title>
-<style>
-  #game {
-    display: grid;
-    grid-template-columns: repeat(10, 30px);
-    grid-template-rows: repeat(10, 30px);
-    gap: 2px;
-    user-select: none;
-    margin-top: 1em;
-  }
-  .cell {
-    width: 30px;
-    height: 30px;
-    background-color: #ddd;
-    border: 1px solid #999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  .cell.revealed {
-    background-color: #bbb;
-    cursor: default;
-  }
-</style>
+  <style>
+    /* Game grid styling */
+    #game {
+      display: grid;
+      grid-template-columns: repeat(10, 30px);
+      grid-template-rows: repeat(10, 30px);
+      gap: 2px;
+      user-select: none;
+      margin-top: 1em;
+      position: relative;
+      z-index: 10; /* Above video */
+    }
+    .cell {
+      width: 30px;
+      height: 30px;
+      background-color: #ddd;
+      border: 1px solid #999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .cell.revealed {
+      background-color: #bbb;
+      cursor: default;
+    }
+
+    /* YouTube background styling */
+    #video-background {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none; /* So clicks go through */
+    }
+    #video-background iframe {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 177.77vh;  /* 16:9 ratio, scale by viewport height */
+      height: 100vh;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* Controls and restart button */
+    #music-controls, #restartBtn, h1, #status {
+      position: relative;
+      z-index: 10;
+      margin-top: 1em;
+      font-family: Arial, sans-serif;
+    }
+    #restartBtn {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+
   <div id="video-background">
-  <iframe
-    src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&loop=1&playlist=eRXE8Aebp7s&controls=0&showinfo=0&modestbranding=1&rel=0"
-    frameborder="0"
-    allow="autoplay; encrypted-media"
-    allowfullscreen
-  ></iframe>
-</div>
+    <iframe
+      src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1&mute=1&loop=1&playlist=eRXE8Aebp7s&controls=0&showinfo=0&modestbranding=1&rel=0"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+    ></iframe>
+  </div>
+
   <h1>Rhiiii</h1>
+
   <div id="music-controls">
-  <button id="playPauseBtn">▶️ Play Music</button>
-  <audio id="bgMusic" loop>
-    <source src="music.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-</div>
+    <button id="playPauseBtn">▶️ Play Music</button>
+    <audio id="bgMusic" loop>
+      <source src="music.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+  </div>
 
   <div id="game"></div>
   <p id="status"></p>
+  <button id="restartBtn">🔄 Restart Game</button>
+
   <script src="script.js"></script>
-<button id="restartBtn">🔄 Restart Game</button>
 </body>
 </html>
