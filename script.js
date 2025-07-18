@@ -124,7 +124,7 @@ function revealCell(r, c) {
   el.style.pointerEvents = 'none';
 
   if (cell.isMine) {
-    el.innerHTML = `<img src="mybomb.png" alt="bomb" style="width:100%;height:100%;">`;
+    el.innerHTML = `<img src="mybomb.jpg" alt="bomb" style="width:100%;height:100%;">`;
   } else if (cell.adjacentMines > 0) {
     el.textContent = cell.adjacentMines;
     el.style.color = getNumberColor(cell.adjacentMines);
