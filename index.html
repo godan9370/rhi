@@ -108,6 +108,99 @@
 
   <div id="content-wrapper">
     <h1>Rhiiii</h1>
+<!-- Add this inside your <body> -->
+<div id="fake-ads-container"></div>
+
+<style>
+.fake-ad {
+  position: fixed;
+  width: 300px;
+  height: 170px;
+  border: 3px solid #f00;
+  background: white;
+  box-shadow: 0 0 10px 3px rgba(255, 0, 0, 0.7);
+  z-index: 9999;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: move;
+  user-select: none;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+}
+
+.fake-ad-header {
+  background: #c00;
+  color: white;
+  padding: 4px 8px;
+  font-weight: bold;
+  cursor: move;
+}
+
+.fake-ad iframe {
+  width: 100%;
+  height: calc(100% - 28px);
+  pointer-events: auto;
+}
+</style>
+
+<script>
+function createFakeAd(videoId, title = "Sponsored Video") {
+  const container = document.getElementById('fake-ads-container');
+  const ad = document.createElement('div');
+  ad.className = 'fake-ad';
+  ad.style.top = Math.random() * (window.innerHeight - 170) + 'px';
+  ad.style.left = Math.random() * (window.innerWidth - 300) + 'px';
+
+  const header = document.createElement('div');
+  header.className = 'fake-ad-header';
+  header.textContent = title;
+  ad.appendChild(header);
+
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1`;
+  iframe.frameBorder = '0';
+  iframe.allow = 'autoplay; encrypted-media';
+  iframe.allowFullscreen = true;
+  ad.appendChild(iframe);
+
+  container.appendChild(ad);
+
+  // Drag logic
+  let isDragging = false, offsetX, offsetY;
+
+  header.addEventListener('mousedown', e => {
+    isDragging = true;
+    offsetX = e.clientX - ad.offsetLeft;
+    offsetY = e.clientY - ad.offsetTop;
+    ad.style.transition = 'none';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    ad.style.transition = '';
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    let x = e.clientX - offsetX;
+    let y = e.clientY - offsetY;
+
+    // Keep inside viewport
+    const maxX = window.innerWidth - ad.offsetWidth;
+    const maxY = window.innerHeight - ad.offsetHeight;
+    x = Math.min(Math.max(0, x), maxX);
+    y = Math.min(Math.max(0, y), maxY);
+
+    ad.style.left = x + 'px';
+    ad.style.top = y + 'px';
+  });
+}
+
+// Create one fake ad with your video when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  createFakeAd('7Cr1NMC_n6E', "Sponsored: Watch This!");
+});
+</script>
 
     <div id="music-controls">
       <button id="playPauseBtn">▶️ Play Music</button>
