@@ -440,6 +440,106 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleMute("rightIframe", "rightMuteBtn");
   });
 </script>
+<style>
+  .popup {
+    position: fixed;
+    width: 320px;
+    background: white;
+    border: 2px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 12000;
+    user-select: none;
+  }
+  .popup-header {
+    background: #222;
+    color: white;
+    padding: 6px 12px;
+    cursor: move;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+  .popup-close {
+    cursor: pointer;
+    font-weight: normal;
+    font-size: 1.2rem;
+  }
+  .popup-content img {
+    width: 100%;
+    display: block;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+</style>
+
+<div id="popup1" class="popup" style="top: 100px; left: 100px;">
+  <div class="popup-header">
+    Hair (1).jpg
+    <span class="popup-close" onclick="closePopup('popup1')">&times;</span>
+  </div>
+  <div class="popup-content">
+    <img src="Hair (1).jpg" alt="Hair (1)" />
+  </div>
+</div>
+
+<div id="popup2" class="popup" style="top: 150px; left: 450px;">
+  <div class="popup-header">
+    Hair (2).jpg
+    <span class="popup-close" onclick="closePopup('popup2')">&times;</span>
+  </div>
+  <div class="popup-content">
+    <img src="Hair (2).jpg" alt="Hair (2)" />
+  </div>
+</div>
+
+<script>
+  function closePopup(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  // Make popups draggable
+  function dragElement(el) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    const header = el.querySelector(".popup-header");
+    if (!header) return;
+
+    header.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e.preventDefault();
+      // get mouse starting position
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e.preventDefault();
+      // calculate movement
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set new position
+      el.style.top = (el.offsetTop - pos2) + "px";
+      el.style.left = (el.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  // Initialize dragging for both popups
+  dragElement(document.getElementById("popup1"));
+  dragElement(document.getElementById("popup2"));
+</script>
 
 
 </body>
